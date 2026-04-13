@@ -2,6 +2,8 @@
 
 Built with **NestJS**, **TypeORM**, and **PostgreSQL**.
 
+API doc: [http://localhost:3000/api/docs](http://localhost:3000/api/docs)
+
 ## Tech Stack
 
 - **Runtime:** Node.js
