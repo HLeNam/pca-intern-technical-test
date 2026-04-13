@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { INestApplication, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { apiReference } from '@scalar/nestjs-api-reference';
+// import { apiReference } from '@scalar/nestjs-api-reference';
 import { CustomValidationPipe } from './common/pipes/validation.pipe';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -40,7 +40,7 @@ async function bootstrap() {
   );
 
   // Setup Swagger API docs
-  processSwagger(app);
+  await processSwagger(app);
 
   // // Global prefix (optional)
   // app.setGlobalPrefix('api');
@@ -55,7 +55,7 @@ async function bootstrap() {
 
 bootstrap();
 
-function processSwagger(app: INestApplication): void {
+async function processSwagger(app: INestApplication): Promise<void> {
   const config = new DocumentBuilder()
     .setTitle('NestJS API Reference')
     .setDescription('API documentation for the NestJS application')
@@ -65,10 +65,16 @@ function processSwagger(app: INestApplication): void {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  app.use(
-    '/api/docs',
-    apiReference({
-      content: document,
-    }),
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    const { apiReference } = await import('@scalar/nestjs-api-reference');
+
+    app.use(
+      '/api/docs',
+      apiReference({
+        content: document,
+      }),
+    );
+  } else {
+    SwaggerModule.setup('/api/docs', app, document);
+  }
 }
