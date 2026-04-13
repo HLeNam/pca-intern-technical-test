@@ -5,8 +5,8 @@ A modern web application for user management created for the **PCA Technical Int
 ## Live Demo (Deployed)
 
 The project is deployed and lives online! You can review the work instantly here without tearing up a local environment:
-- **Frontend Application:** [https://your-frontend-link.com](https://your-frontend-link.com)
-- **Backend API Docs (Swagger):** [https://your-backend-link.com/api/docs](https://your-backend-link.com/api/docs)
+- **Frontend Application:** [https://pca-intern-technical-test.vercel.app](https://pca-intern-technical-test.vercel.app)
+- **Backend API Docs (Swagger):** [https://pca-intern-technical-test-nd1i.vercel.app/api/docs](https://pca-intern-technical-test-nd1i.vercel.app/api/docs)
 
 *(Note: Data is subject to reset occasionally. If the server is from a free tier, it may require a few seconds to wake up on the first request.)*
 
