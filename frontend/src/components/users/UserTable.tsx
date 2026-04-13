@@ -21,10 +21,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { UserTablePagination } from '@/components/users/UserTablePagination';
 import { DEFAULT_META } from '@/constants';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useCreateUser, useUsers } from '@/hooks/useUsers';
+import { useCreateUser, useDeleteUser, useUsers } from '@/hooks/useUsers';
 import { useExportUsers } from '@/hooks/useExport';
 import { SignUpDialog } from '@/components/users/SignUpDialog';
 import type { CreateUserFormData } from '@/lib/validations';
+import { DeleteUserDialog } from '@/components/users/DeleteUserDialog';
 
 export default function UserTable() {
   // Query state
@@ -38,7 +39,7 @@ export default function UserTable() {
   // UI state
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [signUpOpen, setSignUpOpen] = useState(false);
-  const [, setDeleteUser] = useState<User | null>(null);
+  const [deleteUser, setDeleteUser] = useState<User | null>(null);
 
   // Hooks
   const { data, isLoading } = useUsers({
@@ -49,6 +50,7 @@ export default function UserTable() {
     search: debouncedSearch || undefined,
   });
   const createUser = useCreateUser();
+  const deleteUserMutation = useDeleteUser();
   const exportUsers = useExportUsers();
 
   const users = data?.data ?? [];
@@ -75,6 +77,14 @@ export default function UserTable() {
   const handleCreate = async (data: CreateUserFormData) => {
     await createUser.mutateAsync(data);
     setSignUpOpen(false);
+  };
+
+  // Delete handler
+  const handleDelete = async () => {
+    if (!deleteUser) return;
+    await deleteUserMutation.mutateAsync(deleteUser.id);
+    setDeleteUser(null);
+    setRowSelection({});
   };
 
   // Export handler
@@ -202,11 +212,19 @@ export default function UserTable() {
         </CardContent>
       </Card>
 
+      {/* Dialogs */}
       <SignUpDialog
         open={signUpOpen}
         onClose={() => setSignUpOpen(false)}
         onSubmit={handleCreate}
         isLoading={createUser.isPending}
+      />
+
+      <DeleteUserDialog
+        user={deleteUser}
+        onClose={() => setDeleteUser(null)}
+        onConfirm={handleDelete}
+        isLoading={deleteUserMutation.isPending}
       />
     </>
   );
