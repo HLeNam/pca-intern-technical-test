@@ -96,7 +96,30 @@ FRONTEND_URL=http://localhost:5173
 docker-compose up -d
 ```
 
-### 5. Start the application
+### 5. Run migrations
+
+```bash
+npm run migration:run
+```
+
+### 6. Seed the database (Optional)
+
+To seed the database with 100 sample users:
+
+```bash
+npm run seed
+```
+
+This command will:
+
+- Clear existing users
+- Generate 100 random users with faker data
+- Hash passwords using bcrypt
+- Insert all users into the database
+
+**Note:** Default password for all seeded users is `password123`
+
+### 7. Start the application
 
 ```bash
 # Development
