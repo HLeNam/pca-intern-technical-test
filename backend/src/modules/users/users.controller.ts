@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import {
@@ -8,12 +16,16 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiInternalServerErrorResponse,
+  ApiOkResponse,
 } from '@nestjs/swagger';
 import {
   ApiResponseOf,
   ApiErrorResponseExample,
+  ApiResponseWithMetadataOf,
 } from '../../common/helpers/swagger.helper';
 import { UserDto } from './dto/user.dto';
+import { QueryUserDto } from './dto/query-user.dto';
+import { PaginateDto } from '../../common/dto/paginate.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -54,5 +66,21 @@ export class UsersController {
     const user = await this.usersService.create(createUserDto);
 
     return user;
+  }
+
+  @ApiOperation({
+    summary: 'Get a paginated list of users',
+    description:
+      'Retrieve a paginated list of users with optional search and sorting. Returns user data along with pagination metadata.',
+  })
+  @ApiOkResponse({
+    description: 'List of users retrieved successfully',
+    type: ApiResponseWithMetadataOf(UserDto, PaginateDto, {
+      isArray: true,
+    }),
+  })
+  @Get()
+  async findAll(@Query() query: QueryUserDto) {
+    return this.usersService.findAll(query);
   }
 }

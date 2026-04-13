@@ -4,6 +4,9 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { toUserDto, UserDto } from './dto/user.dto';
+import { QueryUserDto } from './dto/query-user.dto';
+import { PaginatedUsers } from './interfaces/paginated-users.interface';
+import { Paginate } from '../../common/interfaces/paginate.interface';
 
 @Injectable()
 export class UsersService {
@@ -28,5 +31,49 @@ export class UsersService {
     const savedUser = await this.userRepository.save(user);
 
     return toUserDto(savedUser);
+  }
+
+  async findAll(query: QueryUserDto): Promise<PaginatedUsers> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+      search,
+    } = query;
+
+    const qb = this.userRepository
+      .createQueryBuilder('user')
+      .where('user.deleted = :deleted', { deleted: false });
+
+    // Search across firstName, lastName, email
+    if (search) {
+      qb.andWhere(
+        '(LOWER(user.firstName) LIKE :search OR LOWER(user.lastName) LIKE :search OR LOWER(user.email) LIKE :search)',
+        { search: `%${search.toLowerCase()}%` },
+      );
+    }
+
+    // Sorting
+    qb.orderBy(`user.${sortBy}`, sortOrder);
+
+    // Pagination
+    const totalItems = await qb.getCount();
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const paginate: Paginate = {
+      totalItems,
+      totalPages,
+      currentPage: page,
+      itemsPerPage: limit,
+    };
+
+    const offset = (page - 1) * limit;
+    const data = await qb.skip(offset).take(limit).getMany();
+
+    return {
+      data: data.map(toUserDto),
+      metadata: paginate,
+    };
   }
 }
