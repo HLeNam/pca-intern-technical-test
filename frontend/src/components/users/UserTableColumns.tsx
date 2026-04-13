@@ -1,5 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown, Trash2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import type { User, UserSortBy, SortOrder } from '@/types/user.types';
@@ -8,6 +8,7 @@ interface GetColumnsOptions {
   sortBy: UserSortBy;
   sortOrder: SortOrder;
   onSort: (field: UserSortBy) => void;
+  onEdit: (user: User) => void;
   onDelete: (user: User) => void;
 }
 
@@ -34,6 +35,7 @@ export const getColumns = ({
   sortBy,
   sortOrder,
   onSort,
+  onEdit,
   onDelete,
 }: GetColumnsOptions): ColumnDef<User>[] => [
   {
@@ -110,15 +112,25 @@ export const getColumns = ({
     id: 'actions',
     header: () => <span className="text-muted-foreground">Actions</span>,
     cell: ({ row }) => (
-      <Button
-        variant="ghost"
-        size="icon"
-        className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-        onClick={() => onDelete(row.original)}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+          onClick={() => onEdit(row.original)}
+        >
+          <Pencil className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+          onClick={() => onDelete(row.original)}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
     ),
-    size: 60,
+    size: 90,
   },
 ];

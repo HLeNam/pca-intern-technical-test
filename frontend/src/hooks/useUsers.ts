@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import type { UserQueryParams } from '@/types/user.types';
+import type { UserQueryParams, UpdateUserPayload } from '@/types/user.types';
 import { usersApi } from '@/api/users.api';
 import type { CreateUserFormData } from '@/lib/validations';
 import type { ApiError } from '@/types/common.types';
@@ -33,6 +33,26 @@ export function useCreateUser() {
 
       if (!error.errors) {
         toast.error(error.message || 'Failed to create user');
+      }
+    },
+  });
+}
+
+// PATCH /users/:id
+export function useUpdateUser(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: UpdateUserPayload) => usersApi.update(id, data),
+    onSuccess: () => {
+      toast.success('User updated successfully');
+      void queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
+    },
+    onError: (err: unknown) => {
+      const error = err as ApiError;
+
+      if (!error.errors) {
+        toast.error(error.message || 'Failed to update user');
       }
     },
   });

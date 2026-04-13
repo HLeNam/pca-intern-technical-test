@@ -21,10 +21,16 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { UserTablePagination } from '@/components/users/UserTablePagination';
 import { DEFAULT_META } from '@/constants';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useCreateUser, useDeleteUser, useUsers } from '@/hooks/useUsers';
+import {
+  useCreateUser,
+  useDeleteUser,
+  useUsers,
+  useUpdateUser,
+} from '@/hooks/useUsers';
 import { useExportUsers } from '@/hooks/useExport';
 import { SignUpDialog } from '@/components/users/SignUpDialog';
-import type { CreateUserFormData } from '@/lib/validations';
+import { UpdateUserDialog } from '@/components/users/UpdateUserDialog';
+import type { CreateUserFormData, UpdateUserFormData } from '@/lib/validations';
 import { DeleteUserDialog } from '@/components/users/DeleteUserDialog';
 
 export default function UserTable() {
@@ -39,6 +45,7 @@ export default function UserTable() {
   // UI state
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
   const [signUpOpen, setSignUpOpen] = useState(false);
+  const [editUser, setEditUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
 
   // Hooks
@@ -50,6 +57,7 @@ export default function UserTable() {
     search: debouncedSearch || undefined,
   });
   const createUser = useCreateUser();
+  const updateUserMutation = useUpdateUser(editUser?.id || '');
   const deleteUserMutation = useDeleteUser();
   const exportUsers = useExportUsers();
 
@@ -79,6 +87,12 @@ export default function UserTable() {
     setSignUpOpen(false);
   };
 
+  // Update handler
+  const handleUpdate = async (data: UpdateUserFormData) => {
+    await updateUserMutation.mutateAsync(data);
+    setEditUser(null);
+  };
+
   // Delete handler
   const handleDelete = async () => {
     if (!deleteUser) return;
@@ -99,6 +113,7 @@ export default function UserTable() {
     sortBy,
     sortOrder,
     onSort: handleSort,
+    onEdit: setEditUser,
     onDelete: setDeleteUser,
   });
 
@@ -218,6 +233,14 @@ export default function UserTable() {
         onClose={() => setSignUpOpen(false)}
         onSubmit={handleCreate}
         isLoading={createUser.isPending}
+      />
+
+      <UpdateUserDialog
+        open={!!editUser}
+        onClose={() => setEditUser(null)}
+        onSubmit={handleUpdate}
+        isLoading={updateUserMutation.isPending}
+        user={editUser}
       />
 
       <DeleteUserDialog
