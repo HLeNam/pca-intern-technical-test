@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import type { UserQueryParams } from '@/types/user.types';
 import { usersApi } from '@/api/users.api';
 import type { CreateUserFormData } from '@/lib/validations';
+import type { ApiError } from '@/types/common.types';
 
 export const USER_KEYS = {
   all: ['users'] as const,
@@ -27,8 +28,12 @@ export function useCreateUser() {
       toast.success('User created successfully');
       void queryClient.invalidateQueries({ queryKey: USER_KEYS.all });
     },
-    onError: (err: Error) => {
-      toast.error(err.message || 'Failed to create user');
+    onError: (err: unknown) => {
+      const error = err as ApiError;
+
+      if (!error.errors) {
+        toast.error(error.message || 'Failed to create user');
+      }
     },
   });
 }

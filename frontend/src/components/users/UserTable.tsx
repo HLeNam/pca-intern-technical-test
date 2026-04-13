@@ -21,8 +21,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { UserTablePagination } from '@/components/users/UserTablePagination';
 import { DEFAULT_META } from '@/constants';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useUsers } from '@/hooks/useUsers';
+import { useCreateUser, useUsers } from '@/hooks/useUsers';
 import { useExportUsers } from '@/hooks/useExport';
+import { SignUpDialog } from '@/components/users/SignUpDialog';
+import type { CreateUserFormData } from '@/lib/validations';
 
 export default function UserTable() {
   // Query state
@@ -35,7 +37,7 @@ export default function UserTable() {
 
   // UI state
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [, setSignUpOpen] = useState(false);
+  const [signUpOpen, setSignUpOpen] = useState(false);
   const [, setDeleteUser] = useState<User | null>(null);
 
   // Hooks
@@ -46,6 +48,7 @@ export default function UserTable() {
     sortOrder,
     search: debouncedSearch || undefined,
   });
+  const createUser = useCreateUser();
   const exportUsers = useExportUsers();
 
   const users = data?.data ?? [];
@@ -66,6 +69,12 @@ export default function UserTable() {
       setSortOrder('ASC');
     }
     setPage(1);
+  };
+
+  // Create handler
+  const handleCreate = async (data: CreateUserFormData) => {
+    await createUser.mutateAsync(data);
+    setSignUpOpen(false);
   };
 
   // Export handler
@@ -192,6 +201,13 @@ export default function UserTable() {
           )}
         </CardContent>
       </Card>
+
+      <SignUpDialog
+        open={signUpOpen}
+        onClose={() => setSignUpOpen(false)}
+        onSubmit={handleCreate}
+        isLoading={createUser.isPending}
+      />
     </>
   );
 }
