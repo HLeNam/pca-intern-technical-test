@@ -7,7 +7,8 @@ export type ApiError = {
   errors?: Record<string, string[]>;
 };
 
-export type ApiSuccessResponse<T, M> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ApiSuccessResponse<T = any, M = any> = {
   success: boolean;
   message: string;
   data?: T;

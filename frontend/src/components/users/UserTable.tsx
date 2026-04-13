@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import UserTableToolbar from '@/components/users/UserTableToolbar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -19,33 +19,62 @@ import type { SortOrder, User, UserSortBy } from '@/types/user.types';
 import { getColumns } from '@/components/users/UserTableColumns';
 import { Skeleton } from '@/components/ui/skeleton';
 import { UserTablePagination } from '@/components/users/UserTablePagination';
-import type { PaginationMeta } from '@/types/common.types';
 import { DEFAULT_META } from '@/constants';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useUsers } from '@/hooks/useUsers';
+import { useExportUsers } from '@/hooks/useExport';
 
 export default function UserTable() {
-  // Data state
-  const [users, setUsers] = useState<User[]>([]);
-  const [meta, setMeta] = useState<PaginationMeta>(DEFAULT_META);
-  const [isLoading, setIsLoading] = useState(false);
-
   // Query state
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState<UserSortBy>('createdAt');
   const [sortOrder, setSortOrder] = useState<SortOrder>('DESC');
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
 
   // UI state
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
-  const [signUpOpen, setSignUpOpen] = useState(false);
-  const [deleteUser, setDeleteUser] = useState<User | null>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [, setSignUpOpen] = useState(false);
+  const [, setDeleteUser] = useState<User | null>(null);
+
+  // Hooks
+  const { data, isLoading } = useUsers({
+    page,
+    limit,
+    sortBy,
+    sortOrder,
+    search: debouncedSearch || undefined,
+  });
+  const exportUsers = useExportUsers();
+
+  const users = data?.data ?? [];
+  const meta = data?.metadata ?? DEFAULT_META;
+
+  // Reset page + selection on search change
+  useEffect(() => {
+    setPage(1);
+    setRowSelection({});
+  }, [debouncedSearch]);
 
   // Sort handler
-  const handleSort = (field: UserSortBy) => {};
+  const handleSort = (field: UserSortBy) => {
+    if (sortBy === field) {
+      setSortOrder(prev => (prev === 'ASC' ? 'DESC' : 'ASC'));
+    } else {
+      setSortBy(field);
+      setSortOrder('ASC');
+    }
+    setPage(1);
+  };
 
-  // Export CSV
-  const handleExport = async () => {};
+  // Export handler
+  const handleExport = () => {
+    const selectedIds = table
+      .getSelectedRowModel()
+      .rows.map(row => row.original.id);
+    exportUsers.mutate(selectedIds);
+  };
 
   const columns = getColumns({
     sortBy,
@@ -82,7 +111,7 @@ export default function UserTable() {
             selectedCount={selectedCount}
             onSignUp={() => setSignUpOpen(true)}
             onExport={handleExport}
-            isExporting={isExporting}
+            isExporting={exportUsers.isPending}
           />
 
           {/* Table */}
