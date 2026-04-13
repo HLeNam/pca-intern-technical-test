@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiConflictResponse,
   ApiInternalServerErrorResponse,
   ApiOkResponse,
+  ApiNotFoundResponse,
 } from '@nestjs/swagger';
 import {
   ApiResponseOf,
@@ -26,6 +29,7 @@ import {
 import { UserDto } from './dto/user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { PaginateDto } from '../../common/dto/paginate.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Controller('users')
 @ApiTags('Users')
@@ -82,5 +86,28 @@ export class UsersController {
   @Get()
   async findAll(@Query() query: QueryUserDto) {
     return this.usersService.findAll(query);
+  }
+
+  @ApiOperation({
+    summary: 'Delete a user by ID',
+    description:
+      'Soft delete a user by their UUID. The user will be marked as deleted but not removed from the database.',
+  })
+  @ApiOkResponse({
+    description: 'User deleted successfully',
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+    ...ApiErrorResponseExample({
+      message: 'User not found',
+    }),
+  })
+  @Delete(':id')
+  async remove(@Param() deleteUserDto: DeleteUserDto) {
+    await this.usersService.remove(deleteUserDto);
+
+    return {
+      message: 'User deleted successfully',
+    };
   }
 }

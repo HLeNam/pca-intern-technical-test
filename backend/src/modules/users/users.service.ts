@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -7,6 +11,7 @@ import { toUserDto, UserDto } from './dto/user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { PaginatedUsers } from './interfaces/paginated-users.interface';
 import { Paginate } from '../../common/interfaces/paginate.interface';
+import { DeleteUserDto } from './dto/delete-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -75,5 +80,22 @@ export class UsersService {
       data: data.map(toUserDto),
       metadata: paginate,
     };
+  }
+
+  async remove(params: DeleteUserDto): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: params.id,
+        deleted: false,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.deleted = true;
+
+    await this.userRepository.save(user);
   }
 }
