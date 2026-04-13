@@ -3,6 +3,10 @@ FROM node:22-alpine as build
 
 WORKDIR /app
 
+# Accept VITE_API_URL at build time
+ARG VITE_API_URL=http://localhost:3000
+ENV VITE_API_URL=$VITE_API_URL
+
 # Copy package files and install dependencies
 COPY package*.json ./
 RUN npm ci
