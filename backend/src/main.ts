@@ -16,6 +16,16 @@ async function bootstrap() {
   const logger = new Logger();
   app.useLogger(logger);
 
+  const config = app.get(ConfigService);
+
+  // Enable CORS for frontend integration
+  const frontendUrl = config.get<string>('app.frontendUrl');
+  app.enableCors({
+    origin: frontendUrl || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    credentials: true,
+  });
+
   // Global pipes
   app.useGlobalPipes(new CustomValidationPipe());
 
@@ -35,7 +45,6 @@ async function bootstrap() {
   // // Global prefix (optional)
   // app.setGlobalPrefix('api');
 
-  const config = app.get(ConfigService);
   const port = config.get<number>('app.port') || 3000;
   const env = config.get<string>('app.env');
 
