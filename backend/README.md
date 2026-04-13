@@ -74,14 +74,16 @@ cp .env.example .env.development
 `.env.example`:
 
 ```env
-PORT=3000
 NODE_ENV=development
+PORT=3000
 
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=user_management
+DB_PASSWORD=password
+DB_NAME=myapp
+DB_SYNC=true
+DB_LOGGING=true
 
 FRONTEND_URL=http://localhost:5173
 ```
@@ -109,20 +111,20 @@ The server will be running at `http://localhost:3000`.
 
 ### Users
 
-| Method   | Endpoint         | Description                                 |
-| -------- | ---------------- | ------------------------------------------- |
-| `GET`    | `/api/users`     | Get all users (pagination, sorting, search) |
-| `POST`   | `/api/users`     | Create a new user                           |
-| `PATCH`  | `/api/users/:id` | Update a user                               |
-| `DELETE` | `/api/users/:id` | Soft delete a user                          |
+| Method   | Endpoint     | Description                                 |
+| -------- | ------------ | ------------------------------------------- |
+| `GET`    | `/users`     | Get all users (pagination, sorting, search) |
+| `POST`   | `/users`     | Create a new user                           |
+| `PATCH`  | `/users/:id` | Update a user                               |
+| `DELETE` | `/users/:id` | Soft delete a user                          |
 
 ### Export
 
-| Method | Endpoint                | Description                  |
-| ------ | ----------------------- | ---------------------------- |
-| `POST` | `/api/export/users/csv` | Export selected users as CSV |
+| Method | Endpoint            | Description                  |
+| ------ | ------------------- | ---------------------------- |
+| `POST` | `/export/users/csv` | Export selected users as CSV |
 
-### GET /api/users — Query Parameters
+### GET /users — Query Parameters
 
 | Parameter   | Type   | Default     | Description                                                      |
 | ----------- | ------ | ----------- | ---------------------------------------------------------------- |
@@ -143,7 +145,7 @@ The server will be running at `http://localhost:3000`.
   "data": {},
   "errors": {},
   "timestamp": "2026-03-21T10:00:00.000Z",
-  "path": "/api/users"
+  "path": "/users"
 }
 ```
 
@@ -165,7 +167,7 @@ The server will be running at `http://localhost:3000`.
   ],
   "errors": {},
   "timestamp": "2026-03-21T10:00:00.000Z",
-  "path": "/api/users",
+  "path": "/users",
   "metadata": {
     "totalItems": 100,
     "totalPages": 10,
@@ -182,7 +184,7 @@ The server will be running at `http://localhost:3000`.
   "success": false,
   "message": "A user with this email already exists",
   "timestamp": "2026-04-13T11:10:56.275Z",
-  "path": "/api/users"
+  "path": "/users"
 }
 ```
 
@@ -193,7 +195,7 @@ The server will be running at `http://localhost:3000`.
   "success": false,
   "message": "Validation failed",
   "timestamp": "2026-04-13T11:10:56.274Z",
-  "path": "/api/users",
+  "path": "/users",
   "errors": {
     "email": ["Email must be a valid email address"]
   }
