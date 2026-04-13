@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
@@ -11,14 +12,14 @@ import { map } from 'rxjs/operators';
 import { ApiResponse } from '../interfaces/api-response.interface';
 
 @Injectable()
-export class ResponseInterceptor<T> implements NestInterceptor<
+export class ResponseInterceptor<T, M> implements NestInterceptor<
   T,
-  ApiResponse<T>
+  ApiResponse<T, M>
 > {
   intercept(
     context: ExecutionContext,
     next: CallHandler,
-  ): Observable<ApiResponse<T>> {
+  ): Observable<ApiResponse<T, M>> {
     const request = context.switchToHttp().getRequest();
 
     return next.handle().pipe(
@@ -28,6 +29,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<
         data: data?.data || data,
         timestamp: new Date().toISOString(),
         path: request.url,
+        ...(data?.metadata && { metadata: data.metadata }),
       })),
     );
   }

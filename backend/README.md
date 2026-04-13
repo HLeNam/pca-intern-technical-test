@@ -1,98 +1,220 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# User Management - Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Built with **NestJS**, **TypeORM**, and **PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+- **Runtime:** Node.js
+- **Framework:** NestJS
+- **Database:** PostgreSQL
+- **ORM:** TypeORM
+- **Validation:** class-validator, class-transformer
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Structure
 
-## Project setup
-
-```bash
-$ npm install
+```
+src/
+├── common/
+│   ├── dto/                        # Shared DTOs (api-response, paginate)
+│   ├── exceptions/                 # Custom exceptions
+│   ├── filters/                    # Global exception filters
+│   ├── helpers/                    # Response & Swagger helpers
+│   ├── interceptors/               # Response transform interceptor
+│   ├── interfaces/                 # Shared interfaces
+│   ├── pipes/                      # Validation pipe
+│   └── transforms/                 # Reusable class-transformer helpers
+├── config/
+│   ├── app.config.ts
+│   ├── database.config.ts
+│   ├── env.validation.ts           # Environment variable validation
+│   └── typeorm.config.ts
+├── modules/
+│   ├── export/
+│   │   ├── dto/
+│   │   ├── export.controller.ts
+│   │   ├── export.service.ts
+│   │   └── export.module.ts
+│   └── users/
+│       ├── dto/
+│       ├── entities/
+│       ├── interfaces/
+│       ├── users.controller.ts
+│       ├── users.service.ts
+│       └── users.module.ts
+├── app.module.ts
+└── main.ts
 ```
 
-## Compile and run the project
+## Prerequisites
+
+- Node.js
+- Docker & Docker Compose
+
+## Getting Started
+
+### 1. Clone the repository
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone <repository-url>
+cd backend
 ```
 
-## Run tests
+### 2. Install dependencies
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3. Configure environment variables
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+cp .env.example .env.development
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+`.env.example`:
 
-## Resources
+```env
+NODE_ENV=development
+PORT=3000
 
-Check out a few resources that may come in handy when working with NestJS:
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=password
+DB_NAME=myapp
+DB_SYNC=true
+DB_LOGGING=true
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+FRONTEND_URL=http://localhost:5173
+```
 
-## Support
+### 4. Start the database
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+docker-compose up -d
+```
 
-## Stay in touch
+### 5. Start the application
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+# Development
+npm run start:dev
 
-## License
+# Production
+npm run build
+npm run start:prod
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The server will be running at `http://localhost:3000`.
+
+## API Endpoints
+
+### Users
+
+| Method   | Endpoint     | Description                                 |
+| -------- | ------------ | ------------------------------------------- |
+| `GET`    | `/users`     | Get all users (pagination, sorting, search) |
+| `POST`   | `/users`     | Create a new user                           |
+| `PATCH`  | `/users/:id` | Update a user                               |
+| `DELETE` | `/users/:id` | Soft delete a user                          |
+
+### Export
+
+| Method | Endpoint            | Description                  |
+| ------ | ------------------- | ---------------------------- |
+| `POST` | `/export/users/csv` | Export selected users as CSV |
+
+### GET /users — Query Parameters
+
+| Parameter   | Type   | Default     | Description                                                      |
+| ----------- | ------ | ----------- | ---------------------------------------------------------------- |
+| `page`      | number | 1           | Page number                                                      |
+| `limit`     | number | 10          | Items per page (max 100)                                         |
+| `sortBy`    | string | `createdAt` | Field to sort by (`firstName`, `lastName`, `email`, `createdAt`) |
+| `sortOrder` | string | `DESC`      | Sort direction (`ASC`, `DESC`)                                   |
+| `search`    | string | -           | Search by first name, last name, or email                        |
+
+## Response Format
+
+**Success:**
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {},
+  "errors": {},
+  "timestamp": "2026-03-21T10:00:00.000Z",
+  "path": "/users"
+}
+```
+
+**Success with pagination:**
+
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": [
+    {
+      "id": "uuid",
+      "email": "john.doe@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "createdAt": "2023-01-01T00:00:00.000Z",
+      "updatedAt": "2023-01-02T00:00:00.000Z"
+    }
+  ],
+  "errors": {},
+  "timestamp": "2026-03-21T10:00:00.000Z",
+  "path": "/users",
+  "metadata": {
+    "totalItems": 100,
+    "totalPages": 10,
+    "currentPage": 1,
+    "itemsPerPage": 10
+  }
+}
+```
+
+**Error:**
+
+```json
+{
+  "success": false,
+  "message": "A user with this email already exists",
+  "timestamp": "2026-04-13T11:10:56.275Z",
+  "path": "/users"
+}
+```
+
+**Validation Error:**
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "timestamp": "2026-04-13T11:10:56.274Z",
+  "path": "/users",
+  "errors": {
+    "email": ["Email must be a valid email address"]
+  }
+}
+```
+
+## Design Decisions
+
+**Soft Delete**
+Users are never permanently deleted. Instead, a `deleted` flag is set to `true`. This preserves data integrity and allows the same email to be reused after deletion.
+
+**Email Uniqueness**
+A partial unique index (`WHERE deleted = false`) is applied at the database level, allowing the same email to be reused after a user is soft deleted.
+
+**Consistent Response Format**
+All API responses follow a unified structure with `success`, `message`, `data`, `errors`, `timestamp`, and `path` fields, making frontend integration straightforward.
+
+## Assumptions
+
+- Authentication and authorization are out of scope for this assignment.
+- Password encryption is not required as per the assignment brief.
+- The `deleted` field follows the sample data structure provided in the brief.
