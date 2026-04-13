@@ -109,6 +109,26 @@ npm run start:prod
 
 The server will be running at `http://localhost:3000`.
 
+## Running with Docker
+
+Build and start all stack (backend + database):
+
+```bash
+docker-compose up -d --build
+```
+
+Stop:
+
+```bash
+docker-compose down
+```
+
+Stop and delete data:
+
+```bash
+docker-compose down -v
+```
+
 ## API Endpoints
 
 ### Users
