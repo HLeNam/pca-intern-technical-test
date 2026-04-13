@@ -32,6 +32,11 @@ import { ExportModule } from './modules/export/export.module';
         autoLoadEntities: true,
         migrations: [__dirname + '/migrations/*.{ts,js}'],
         migrationsRun: false,
+        ...(process.env.NODE_ENV === 'production' && {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }),
       }),
     }),
 
