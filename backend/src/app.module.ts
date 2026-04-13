@@ -7,6 +7,7 @@ import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import { envValidationSchema } from './config/env.validation';
 import { UsersModule } from './modules/users/users.module';
+import { ExportModule } from './modules/export/export.module';
 
 @Module({
   imports: [
@@ -35,6 +36,8 @@ import { UsersModule } from './modules/users/users.module';
     }),
 
     UsersModule,
+
+    ExportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
