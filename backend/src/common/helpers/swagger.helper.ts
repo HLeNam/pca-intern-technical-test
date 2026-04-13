@@ -21,6 +21,31 @@ export function ApiResponseOf<T>(
   return ApiResponseClass;
 }
 
+export function ApiResponseWithMetadataOf<T, M>(
+  DataClass: Type<T>,
+  MetadataClass: Type<M>,
+  options?: { isArray?: boolean },
+) {
+  class ApiResponseWithMetadataClass extends ApiResponseDto<T> {
+    @ApiProperty({
+      type: () => DataClass,
+      isArray: options?.isArray || false,
+    })
+    declare data: T;
+
+    @ApiProperty({
+      type: () => MetadataClass,
+    })
+    declare metadata: M;
+  }
+
+  Object.defineProperty(ApiResponseWithMetadataClass, 'name', {
+    value: `ApiResponseWithMetadataOf${DataClass.name}${options?.isArray ? 'Array' : ''}`,
+  });
+
+  return ApiResponseWithMetadataClass;
+}
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 export function ApiErrorResponseExample(
   example: Partial<ApiResponseDto>,

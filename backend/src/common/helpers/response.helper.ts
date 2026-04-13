@@ -24,3 +24,6 @@ export const ok = <T>(message: string, data?: T, path?: string) =>
 
 export const fail = (message: string, errors?: any, path?: string) =>
   createResponse(false, message, undefined, path, errors);
+
+export const created = <T>(message: string, data?: T, path?: string) =>
+  createResponse(true, message, data, path);

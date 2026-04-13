@@ -19,3 +19,11 @@ export class ApiResponseDto<T = any> {
   @ApiProperty({ example: '/users/me' })
   path!: string;
 }
+
+export class ApiResponseWithMetadataDto<
+  T = any,
+  M = any,
+> extends ApiResponseDto<T> {
+  @ApiProperty({ required: false })
+  metadata?: M;
+}
