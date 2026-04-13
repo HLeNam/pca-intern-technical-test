@@ -17,7 +17,7 @@ export type ApiSuccessResponse<T, M> = {
   metadata?: M;
 };
 
-export type Pagination = {
+export type PaginationMeta = {
   totalItems: number;
   totalPages: number;
   currentPage: number;

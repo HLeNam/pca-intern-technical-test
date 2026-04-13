@@ -18,13 +18,18 @@ import {
 import type { SortOrder, User, UserSortBy } from '@/types/user.types';
 import { getColumns } from '@/components/users/UserTableColumns';
 import { Skeleton } from '@/components/ui/skeleton';
+import { UserTablePagination } from '@/components/users/UserTablePagination';
+import type { PaginationMeta } from '@/types/common.types';
+import { DEFAULT_META } from '@/constants';
 
 export default function UserTable() {
   // Data state
   const [users, setUsers] = useState<User[]>([]);
+  const [meta, setMeta] = useState<PaginationMeta>(DEFAULT_META);
   const [isLoading, setIsLoading] = useState(false);
 
   // Query state
+  const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState<UserSortBy>('createdAt');
   const [sortOrder, setSortOrder] = useState<SortOrder>('DESC');
@@ -140,6 +145,22 @@ export default function UserTable() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination */}
+          {!isLoading && meta.totalItems > 0 && (
+            <UserTablePagination
+              meta={meta}
+              onPageChange={p => {
+                setPage(p);
+                setRowSelection({});
+              }}
+              onLimitChange={l => {
+                setLimit(l);
+                setPage(1);
+                setRowSelection({});
+              }}
+            />
+          )}
         </CardContent>
       </Card>
     </>
