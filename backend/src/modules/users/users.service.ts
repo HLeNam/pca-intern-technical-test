@@ -12,6 +12,7 @@ import { QueryUserDto } from './dto/query-user.dto';
 import { PaginatedUsers } from './interfaces/paginated-users.interface';
 import { Paginate } from '../../common/interfaces/paginate.interface';
 import { DeleteUserDto } from './dto/delete-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -97,5 +98,34 @@ export class UsersService {
     user.deleted = true;
 
     await this.userRepository.save(user);
+  }
+
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserDto> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+        deleted: false,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (updateUserDto.email && updateUserDto.email !== user.email) {
+      const emailExists = await this.userRepository.findOne({
+        where: { email: updateUserDto.email, deleted: false },
+      });
+
+      if (emailExists) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
+    Object.assign(user, updateUserDto);
+
+    const updatedUser = await this.userRepository.save(user);
+
+    return toUserDto(updatedUser);
   }
 }
