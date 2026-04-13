@@ -25,6 +25,7 @@ export class UsersService {
     const existingUser = await this.userRepository.findOne({
       where: {
         email: createUserDto.email,
+        deleted: false,
       },
     });
 

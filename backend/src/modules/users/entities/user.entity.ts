@@ -2,16 +2,21 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('users')
+@Index('unique_email_active', ['email'], {
+  unique: true,
+  where: '"deleted" = false',
+})
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Column({ unique: true })
+  @Column()
   email!: string;
 
   @Column({ name: 'first_name' })
